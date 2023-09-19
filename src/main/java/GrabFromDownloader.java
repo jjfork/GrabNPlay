@@ -13,43 +13,44 @@ import java.util.List;
 public class GrabFromDownloader {
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Simple GUI Example");
+        JFrame frame = new JFrame("GrabNPlay");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 150);
+        frame.setSize(800, 300);
 
-        // Create a JPanel to hold the components
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2));
+        panel.setLayout(new GridLayout(5, 2));
 
-        // Create labels and text fields
-        JLabel urlLabel = new JLabel("URL:");
+        JLabel urlLabel = new JLabel("LINK< JESLI PLEJKA JEST PRYWATNA TO LINK MUSI BYC Z 'COPY' I PLEJKA NIE MOZE BYC PRYWATNA:");
         JTextField urlTextField = new JTextField();
 
-        JLabel intLabel = new JLabel("Integer:");
+        JLabel folderLabel = new JLabel("DAJ SE NAZWE FOLDERA");
+        JTextField folderTextLabel = new JTextField();
+
+        JLabel intLabel = new JLabel("ILE NUT JEST NA PLEJCE:");
         JTextField intTextField = new JTextField();
 
-        // Create a button
-        JButton submitButton = new JButton("Submit");
+        JButton submitButton = new JButton("POBIERAJ");
+        final JProgressBar progressBar = new JProgressBar(0, GrabFromDownloaderApp.getNumberOfSongs());
 
-        // Add components to the panel
         panel.add(urlLabel);
         panel.add(urlTextField);
+        panel.add(folderLabel);
+        panel.add(folderTextLabel);
         panel.add(intLabel);
         panel.add(intTextField);
         panel.add(submitButton);
+        panel.add(progressBar);
 
-        // Add an action listener to the button
         submitButton.addActionListener(e -> {
             String urlString = urlTextField.getText();
+            String folderString = folderTextLabel.getText();
             int intValue = Integer.parseInt(intTextField.getText());
 
-            // Call your function here with urlString and intValue
-            // Replace the following line with your actual function call
             System.out.println("URL: " + urlString);
             System.out.println("Integer: " + intValue);
             try (Playwright playwright = Playwright.create()) {
                 GrabFromDownloaderApp app = new GrabFromDownloaderApp(playwright);
-                app.run(urlString, intValue);
+                app.run(urlString, intValue, progressBar, folderString);
             } catch(Exception ee) {
                 ee.printStackTrace();
             }
@@ -68,6 +69,12 @@ public class GrabFromDownloader {
 class GrabFromDownloaderApp {
 
     private static String PLAYLIST_URL = "";
+    private static String FOLDER_NAME = "";
+
+    public static int getNumberOfSongs() {
+        return NUMBER_OF_SONGS;
+    }
+
     private static int NUMBER_OF_SONGS = 0;
 
     private final Playwright playwright;
@@ -79,11 +86,13 @@ class GrabFromDownloaderApp {
         this.links = new ArrayList<>();
     }
 
-    public void run(String urlString, int intValue) {
+    public void run(String urlString, int intValue, JProgressBar progressBar, String folderString) {
         try {
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                     .setHeadless(false).setSlowMo(0).setTimeout(9999999));
-            BrowserContext context = browser.newContext();
+            BrowserContext context = browser.newContext(new Browser.NewContextOptions()
+                    .setLocale("en-US")
+                    .setTimezoneId("America/New_York"));
 
             // Grant permissions
             context.grantPermissions(permissions);
@@ -91,10 +100,10 @@ class GrabFromDownloaderApp {
             NUMBER_OF_SONGS = intValue;
             makeListOfSongs(context, urlString);
 
-            String folderName = "techno2ToDie";//wez se tu daj tak zeby bralo nazwe z plejki
+            FOLDER_NAME = folderString;//wez se tu daj tak zeby bralo nazwe z plejki
             for (int i = 0; i < NUMBER_OF_SONGS && i < links.size(); i++) {
                 String songLink = links.get(i);
-                downloadSong(context, songLink, folderName);
+                downloadSong(context, songLink, folderString, progressBar);
                 System.out.println(NUMBER_OF_SONGS - i);
             }
 
@@ -105,7 +114,7 @@ class GrabFromDownloaderApp {
         }
     }
 
-    private void downloadSong(BrowserContext context, String songLink, String folderName) throws IOException {
+    private void downloadSong(BrowserContext context, String songLink, String folderName, JProgressBar progressBar) throws IOException {
         try (Page page = context.newPage()) {
             page.navigate("https://www.grabfrom.com/");
             FrameLocator frame = page.frameLocator("iframe[name=\"conversionFrame\"]");
@@ -127,6 +136,7 @@ class GrabFromDownloaderApp {
 
             Path destinationFilePath = destinationFolder.resolve(download.suggestedFilename());
             download.saveAs(destinationFilePath);
+            progressBar.setValue(progressBar.getValue() + 1);
         }
     }
 
