@@ -8,7 +8,7 @@ public class Zapisywacz {
     public static void main(String[] args) {
         try (Playwright playwright = Playwright.create()) {
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                    .setHeadless(false).setSlowMo(500));
+                    .setHeadless(false).setSlowMo(1500));
             BrowserContext context = browser.newContext();
             context.tracing().start(new Tracing.StartOptions()
                     .setScreenshots(true)
@@ -22,61 +22,59 @@ public class Zapisywacz {
             confirm(page);
             go_back(page);
 
-//2 Modelowanie wolumetryczne obiektów przestrzennych [W06GIT-SI0025W]
-            register(page, "#W06GIT-SI0025W");
-
-//3 Podstawy geofizyki [W06GIT-SI0021L]
+            ////3 Podstawy geofizyki [W06GIT-SI0021L]
             register(page, "#W06GIT-SI0021L");
             pick_group(page,2);
             confirm(page);
             go_back(page);
 
 
-//4 Podstawy geofizyki [W06GIT-SI0021C]
-            register(page, "#W06GIT-SI0021C");
-
-//5 Podstawy geofizyki [W06GIT-SI0021W]
-            register(page, "#W06GIT-SI0021W");
-
-
-
-//6 Podstawy przetwarzania geodanych [W06GIT-SI0024L]
-            register(page, "#W06GIT-SI0024L");
-            pick_group(page,1);
-            confirm(page);
-            go_back(page);
-
-
-//7 Podstawy przetwarzania geodanych [W06GIT-SI0024W]
-            register(page, "#W06GIT-SI0024W");
-
-//8 Systemy geoinformacyjne [W06GIT-SI0026L]
+            //8 Systemy geoinformacyjne [W06GIT-SI0026L]
             register(page, "#W06GIT-SI0026L");
             pick_group(page,2);
             confirm(page);
             go_back(page);
 
-
-//9 Systemy geoinformacyjne [W06GIT-SI0026W]
-            register(page, "#W06GIT-SI0026W");
-
-//10 Wstęp do uczenia maszynowego [W06GIT-SI0022L]
-            register(page, "#W06GIT-SI0022L");
-            pick_group(page,1);
-            confirm(page);
-            go_back(page);
-
-//11 Wstęp do uczenia maszynowego [W06GIT-SI0022W]
-            register(page, "#W06GIT-SI0022W");
-
-//12 Zastosowania GIS w naukach o Ziemi [W06GIT-SI0023L]
+            //12 Zastosowania GIS w naukach o Ziemi [W06GIT-SI0023L]
             register(page, "#W06GIT-SI0023L");
             pick_group(page,1);
             confirm(page);
             go_back(page);
 
+            //6 Podstawy przetwarzania geodanych [W06GIT-SI0024L]
+            register(page, "#W06GIT-SI0024L");
+            pick_group(page,1);
+            confirm(page);
+            go_back(page);
+
+            ////10 Wstęp do uczenia maszynowego [W06GIT-SI0022L]
+            register(page, "#W06GIT-SI0022L");
+            pick_group(page,1);
+            confirm(page);
+            go_back(page);
+
+            /////////////DLA ODWAZNYCH NIZEJ. POLECAM USTAWIC JAKIS DELAY W LINIJCE 11 MIENIC SLOWMO
+
+//2 Modelowanie wolumetryczne obiektów przestrzennych [W06GIT-SI0025W]
+//            register(page, "#W06GIT-SI0025W");
+
+//4 Podstawy geofizyki [W06GIT-SI0021C]
+//            register(page, "#W06GIT-SI0021C");
+
+//5 Podstawy geofizyki [W06GIT-SI0021W]
+//            register(page, "#W06GIT-SI0021W");
+
+//7 Podstawy przetwarzania geodanych [W06GIT-SI0024W]
+//            register(page, "#W06GIT-SI0024W");
+
+//9 Systemy geoinformacyjne [W06GIT-SI0026W]
+//            register(page, "#W06GIT-SI0026W");
+
+//11 Wstęp do uczenia maszynowego [W06GIT-SI0022W]
+//            register(page, "#W06GIT-SI0022W");
+
 //13 Zastosowania GIS w naukach o Ziemi [W06GIT-SI0023W]
-            register(page, "#W06GIT-SI0023W");
+//            register(page, "#W06GIT-SI0023W");
 
             context.tracing().stop(new Tracing.StopOptions()
                     .setPath(Paths.get("trace.zip")));
