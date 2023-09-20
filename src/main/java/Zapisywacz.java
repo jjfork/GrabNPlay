@@ -103,7 +103,7 @@ public class Zapisywacz {
     }
 
     private static void pick_group(Page page, int numerGrupy) {
-        page.locator("(input[@class='group-input'])["+ numerGrupy +"]").check();
+        page.locator("(//input[@type='radio'])["+ numerGrupy +"]").check();
     }
 
     private static void confirm(Page page) {
